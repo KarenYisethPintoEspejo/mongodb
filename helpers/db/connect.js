@@ -1,39 +1,46 @@
+// connect.js
 import {MongoClient} from 'mongodb';
 
 export class connect {
-    static instance = null;
-    db = null;
-    #host = null;
+    static instance;
+    user;
+    port;
+    cluster;
+    #host;
     #pass
     #dbName
-    static async getinstance({host, user, pass, port,cluster, dbName}=
+    constructor({host, user, pass, port,cluster, dbName}=
         {host: "mongodb://", 
             user: "mongo", 
             pass: "PNSmQbwecKrbuFTCqXmYoaqicgEZpFeF", 
             port: 47797, 
             cluster: "monorail.proxy.rlwy.net", 
             dbName: "test"}
-        ){
-        if(connect.instance === null){
-            connect.instance = new connect();
-            connect.instance.host = host;
-            connect.instance.user = user;
-            connect.instance.pass = pass;
-            connect.instance.port = port;
-            connect.instance.cluster = cluster;
-            connect.instance.dbName = dbName;
+        ) {
+        if (typeof connect.instance === 'object') {
+            return connect.instance;
         }
-        await connect.instance.#open();
-        return connect.instance;
+        this.setHost = host;
+        this.user = user;
+        this.setPass = pass;
+        this.port = port;
+        this.cluster = cluster;
+        this.setDbName = dbName;
+        this.#open()
+        connect.instance = this;
+        return this;
     }
-    set host(host){
+    set setHost(host){
         this.#host = host;
     }
-    set pass(pass){
+    set setPass(pass){
         this.#pass = pass;
     }
-    set dbName(dbName){
+    set setDbName(dbName){
         this.#dbName = dbName;
+    }
+    get getDbName(){
+        return this.#dbName;
     }
     async #open(){
         console.log("Entre");
@@ -41,7 +48,6 @@ export class connect {
         let url = `${this.#host}${this.user}:${this.#pass}@${this.cluster}:${this.port}`;
         this.conexion = new MongoClient(url);
         await this.conexion.connect();
-        console.log("Mensaje de la coexion ");
-        this.db = this.conexion.db(this.dbName);
+        console.log("Mensaje de la conexion ");
     }
 }
