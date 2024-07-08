@@ -197,4 +197,44 @@ async getDvdCopies(){
           return data;
       }
 
+// 14)**Encontrar el número total de premios que se han otorgado en todas las películas:**
+async getAllAwards(){
+    await this.conexion.connect();
+      const collection = this.db.collection('movis');
+      const data = await collection.aggregate(
+        [
+            {
+              $unwind: "$character"
+            },
+            {
+              $lookup: {
+                from: "authors",
+                localField: "character.id_actor",
+                foreignField: "id_actor",
+                as: "character.id_actor"
+              }
+            },
+              {
+              $unwind: "$character.id_actor"
+            },
+              {
+              $set: {
+                totalPremios: {$size:"$character.id_actor.awards"}
+              }
+            },
+            {
+              $group: {
+                _id: "$_id",
+                nombre:{$first:"$name"},
+               totalPremios:{$sum:"$totalPremios"}
+              }
+            },     
+        ]
+      ).toArray();
+      await this.conexion.close();
+      return data;
+  }
+
+
+
 }
