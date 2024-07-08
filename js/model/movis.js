@@ -330,6 +330,48 @@ async getAllAwards(){
           await this.conexion.close();
           return data;
       }
-  
+
+
+// 19)Calcular el valor total de todas las copias de Blu-ray disponibles:
+   async getValueCopiesBluray(){
+    await this.conexion.connect();
+      const collection = this.db.collection('movis');
+      const data = await collection.aggregate(
+        [
+            {
+              $unwind: "$format"
+            },
+            {
+              $match: {
+                "format.name":"Bluray"
+              }
+            },
+            {
+              $group: {
+                _id: null,
+                totalValorBluray:{
+                  $sum:{
+                    $multiply:[
+                      
+                      "$format.value",
+                      "$format.copies"
+                    ]
+                    
+                  }
+                }
+              }
+            },
+            {
+              $project: {
+                _id:0
+              }
+            }
+            
+            
+        ]
+      ).toArray();
+      await this.conexion.close();
+      return data;
+  }
 
 }
