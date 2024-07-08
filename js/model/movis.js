@@ -25,17 +25,54 @@ export class movis extends connect{
 
 // 1)Contar el número total de copias de DVD disponibles en todos los registros:
 
-    async getCountDvd(){
-        const collection = this.db.collection('movis');
-        const data = await collection.find(
+async getCountDvd(){
+    await this.conexion.connect();
+    const collection = this.db.collection('movis');
+    const data = await collection.aggregate(
+        [
             {
-                format: { 
-                    $elemMatch: 
-                    {name: {$eq: "dvd"}}
-                }
+              $unwind: "$format"
+            },
+            {
+              $match: {
+                "format.name": "dvd"
+              }
+            },
+            {
+              $group: {
+                _id: "$format.name",
+                cantidad: { $sum: "$format.copies" }
+              }
             }
-        ).toArray();
-        await this.conexion.close();
-        return {countByMoviDVD: data.length};
-    }
+        ]
+    ).toArray();
+    await this.conexion.close();
+    return {countByMoviDVD: data.length};
+}
+
+// 6)Listar todos los géneros de películas distintos:
+
+    async getAllGenre(){
+    await this.conexion.connect();
+    const collection = this.db.collection('movis');
+    const data = await collection.aggregate(
+        [
+            { $unwind: "$genre" },
+            {
+              $group: {
+                _id: null,
+                generos: { $addToSet: "$genre" }
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                generos: 1
+              }
+            }
+        ]
+    ).toArray();
+    await this.conexion.close();
+    return data;
+}
 }
