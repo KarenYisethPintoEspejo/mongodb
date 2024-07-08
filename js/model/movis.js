@@ -76,7 +76,7 @@ async getDvdCopies(){
     return data;
 }
 
-    // 7)Encontrar películas donde el actor con id 1 haya participado:
+// 7)Encontrar películas donde el actor con id 1 haya participado:
     async getMoviesAuthorId1(){
         await this.conexion.connect();
         const collection = this.db.collection('movis');
@@ -102,7 +102,7 @@ async getDvdCopies(){
     }
 
 
-    // 8)Calcular el valor total de todas las copias de DVD disponibles:
+// 8)Calcular el valor total de todas las copias de DVD disponibles:
     async getValueCopiesDvd(){
         await this.conexion.connect();
             const collection = this.db.collection('movis');
@@ -140,5 +140,43 @@ async getDvdCopies(){
             await this.conexion.close();
             return data;
         }
+
+
+// 9)Encontrar todas las películas en las que John Doe ha actuado:
+     async getAllMovisJohnDae(){
+        await this.conexion.connect();
+          const collection = this.db.collection('movis');
+          const data = await collection.aggregate(
+            [
+                {
+                  $unwind: "$character"
+                },
+                {
+                  $lookup: {
+                    from: "actor",
+                    localField: "character.id_actor",
+                    foreignField: "id_actor",
+                    as: "actores"
+                  }
+                },
+                {
+                  $unwind: "$actores"
+                },
+                {
+                  $match: {
+                    "actores.full_name": "John Doe"
+                  }
+                },
+                {
+                  $project: {
+                    _id: 1,
+                    name: "$name"
+                  }
+                }
+            ]
+          ).toArray();
+          await this.conexion.close();
+          return data;
+      }
 
 }
