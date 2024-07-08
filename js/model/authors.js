@@ -208,4 +208,24 @@ async getAuthorsWithInstragram(){
     return data;
 }
 
+//  18)Encontrar todos los actores que han ganado premios después de 2015:
+async getAllAuthorsAwardsAfter2015(){
+    await this.conexion.connect();
+    const collection = this.db.collection('authors');
+    const data = await collection.aggregate(
+      [
+        {
+          $unwind: "$awards"
+        },
+        {
+          $match: {
+            "awards.year":{$gt:2015}
+          }
+        }
+      ]
+    ).toArray();
+    await this.conexion.close();
+    return data;
+}
+
 }
