@@ -20,4 +20,30 @@ export class authors extends connect{
       connect.instanceConnect= undefined
 }
 
+
+// 2)Encontrar todos los actores que han ganado premios Oscar:
+    async getAuthorsAwards(){
+        await this.conexion.connect();
+        const collection = this.db.collection('authors');
+        const data = await collection.aggregate(
+            [
+                {
+                  $unwind: "$awards"
+                },
+                {
+                  $match: {
+                    "awards.name": "Oscar Award"
+                  }
+                },
+                {
+                  $project: {
+                    nombre: "$full_name"
+                  }
+                }
+            ]
+        ).toArray();
+        await this.conexion.close();
+        return data;
+    }
+
 }
