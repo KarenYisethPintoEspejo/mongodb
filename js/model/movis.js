@@ -236,5 +236,45 @@ async getAllAwards(){
   }
 
 
+// 15)**Encontrar todas las películas en las que John Doe ha actuado y que estén en formato Blu-ray:**
+
+    async getAllMovisJohnDaeBluray(){
+        await this.conexion.connect();
+          const collection = this.db.collection('movis');
+          const data = await collection.aggregate(
+            [
+                {
+                      $unwind: "$format"
+                },
+                {
+                  $match: {
+                    "format.name":"Bluray"
+                  }
+                },
+                {
+                  $lookup: {
+                    from: "authors",
+                    localField: "character.id_actor",
+                    foreignField: "id_actor",
+                    as: "actor"
+                  }
+                },
+                {
+                  $unwind: "$actor"
+                },
+                {
+                  $match: {
+                    "actor.full_name":"John Doe"
+                  }
+                }
+                
+                
+            ]
+          ).toArray();
+          await this.conexion.close();
+          return data;
+      }
+  
+
 
 }
