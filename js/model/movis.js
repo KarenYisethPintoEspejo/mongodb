@@ -374,4 +374,22 @@ async getAllAwards(){
       return data;
   }
 
+  // 20)Encontrar todas las películas en las que el actor con id 2 haya participado:
+async getAllMovisAuthorId2(){
+    await this.conexion.connect();
+      const collection = this.db.collection('movis');
+      const data = await collection.aggregate(
+        [
+            {
+              $match: {
+                "character.id_actor":2
+              }
+            }
+        ]
+      ).toArray();
+      await this.conexion.close();
+      return data;
+  }
+
+
 }
