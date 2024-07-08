@@ -75,4 +75,32 @@ async getCountDvd(){
     await this.conexion.close();
     return data;
 }
+
+    // 7)Encontrar películas donde el actor con id 1 haya participado:
+    async getAuthorId1(){
+        await this.conexion.connect();
+        const collection = this.db.collection('movis');
+        const data = await collection.aggregate(
+            [
+                {
+                  $unwind: "$character"
+                },
+                {
+                  $match: {
+                    "character.id_actor": 1
+                  }
+                },
+                {
+                  $project: {
+                    pelicula: "$name"
+                  }
+                }
+            ]
+        ).toArray();
+        await this.conexion.close();
+        return data;
+    }
+
+
+
 }
