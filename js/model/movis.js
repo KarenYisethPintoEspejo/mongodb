@@ -16,6 +16,15 @@ export class movis extends connect{
         movis.instance = this;
         return this;
     }
+
+    destructor() {
+        movis.instancemovis=undefined
+        connect.instanceConnect= undefined
+    }
+
+
+// 1)Contar el número total de copias de DVD disponibles en todos los registros:
+
     async getCountDvd(){
         const collection = this.db.collection('movis');
         const data = await collection.find(
