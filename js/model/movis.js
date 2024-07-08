@@ -25,7 +25,7 @@ export class movis extends connect{
 
 // 1)Contar el número total de copias de DVD disponibles en todos los registros:
 
-async getCountDvd(){
+async getDvdCopies(){
     await this.conexion.connect();
     const collection = this.db.collection('movis');
     const data = await collection.aggregate(
@@ -52,7 +52,7 @@ async getCountDvd(){
 
 // 6)Listar todos los géneros de películas distintos:
 
-    async getAllGenre(){
+    async getAllGenreDistinc(){
     await this.conexion.connect();
     const collection = this.db.collection('movis');
     const data = await collection.aggregate(
@@ -77,7 +77,7 @@ async getCountDvd(){
 }
 
     // 7)Encontrar películas donde el actor con id 1 haya participado:
-    async getAuthorId1(){
+    async getMoviesAuthorId1(){
         await this.conexion.connect();
         const collection = this.db.collection('movis');
         const data = await collection.aggregate(
@@ -102,5 +102,43 @@ async getCountDvd(){
     }
 
 
+    // 8)Calcular el valor total de todas las copias de DVD disponibles:
+    async getValueCopiesDvd(){
+        await this.conexion.connect();
+            const collection = this.db.collection('movis');
+            const data = await collection.aggregate(
+                [
+                    {
+                      $unwind: "$format"
+                    },
+                    {
+                      $match: {
+                        "format.name": "dvd"
+                      }
+                    },
+                    {
+                      $group: {
+                        _id: null,
+                        totalValor: {
+                          $sum: {
+                            $multiply: [
+                              "$format.copies",
+                              "$format.value"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      $project: {
+                        _id: 0,
+                        totalValor: 1
+                      }
+                    }
+                ]
+            ).toArray();
+            await this.conexion.close();
+            return data;
+        }
 
 }
