@@ -179,4 +179,22 @@ async getDvdCopies(){
           return data;
       }
 
+
+// 13)Encontrar todas las películas en las que participan actores principales:
+    async getMovisRolMajor(){
+        await this.conexion.connect();
+          const collection = this.db.collection('movis');
+          const data = await collection.aggregate(
+            [
+                {
+                  $match: {
+                    "character.rol":"principal"
+                  }
+                }
+            ]
+          ).toArray();
+          await this.conexion.close();
+          return data;
+      }
+
 }
