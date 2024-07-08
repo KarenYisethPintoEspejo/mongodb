@@ -47,7 +47,6 @@ export class connect {
         // mongodb://mongo:PNSmQbwecKrbuFTCqXmYoaqicgEZpFeF@monorail.proxy.rlwy.net:47797/
         let url = `${this.#host}${this.user}:${this.#pass}@${this.cluster}:${this.port}`;
         this.conexion = new MongoClient(url);
-        await this.conexion.connect();
-        console.log("Mensaje de la conexion ");
+        console.log("Mensaje de la conexion");
     }
 }
