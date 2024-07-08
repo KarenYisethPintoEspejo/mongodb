@@ -130,4 +130,31 @@ async getAuthorMostAwards(){
     return data;
 }
 
+//  10)Encontrar el número total de actores en la base de datos:
+async getAuthorsDataBase(){
+    await this.conexion.connect();
+    const collection = this.db.collection('authors');
+    const data = await collection.aggregate(
+        [
+            {
+              $group: {
+                _id: null,
+                numero_total: {
+                  $sum: 1
+                }
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                numero_total: 1
+              }
+            }
+        ]
+    ).toArray();
+    await this.conexion.close();
+    return data;
+}
+
+
 }
