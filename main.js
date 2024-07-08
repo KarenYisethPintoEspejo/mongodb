@@ -2,5 +2,17 @@
 
 import { movis } from "./js/model/movis.js";
 
-let objMovis = new movis();
-console.log(await objMovis.getCountDvd());
+let objmovis = new movis();
+
+
+
+
+
+objmovis.destructor()
+
+let objauthors = new authors();
+
+
+
+
+objauthors.destructor()
