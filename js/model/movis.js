@@ -276,5 +276,31 @@ async getAllAwards(){
       }
   
 
+// 16)**Encontrar todas las películas de ciencia ficción que tengan al actor con id 3:**
+
+    async getMovisScienceFictionAuthorId3(){
+    await this.conexion.connect();
+      const collection = this.db.collection('movis');
+      const data = await collection.aggregate(
+        [
+            {
+              $unwind: "$genre"
+            },
+             {
+               $match: {
+                 genre:"Ciencia Ficción"
+               }
+             },
+             {
+               $match: {
+                 "character.id_actor":3
+               }
+             }
+        ]
+      ).toArray();
+      await this.conexion.close();
+      return data;
+  }
+
 
 }
