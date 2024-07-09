@@ -237,7 +237,28 @@
 11. **Encontrar la edad promedio de los actores en la base de datos:**
 
     ```javascript
-    
+    [
+      {
+          $addFields: {
+            age: {
+              $dateDiff: {
+                startDate: { $dateFromString: {
+                  dateString: '$date_of_birth',
+                  format: '%Y-%m-%d'
+                }},
+                endDate: new Date(),
+                unit: "year"
+              }
+            }
+          }
+      },
+        {
+          $group: {
+            _id: null,
+            avg_age_actors: {$avg: '$age'}
+          }
+        }
+    ]
     ```
 
 12. **Encontrar todos los actores que tienen una cuenta de Instagram:**
